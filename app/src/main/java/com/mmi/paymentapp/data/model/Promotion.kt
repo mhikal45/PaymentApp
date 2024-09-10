@@ -4,7 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity()
+@Entity
 data class Promotion(
 	@PrimaryKey(autoGenerate = true)
 	@ColumnInfo(name = "PromotionId")

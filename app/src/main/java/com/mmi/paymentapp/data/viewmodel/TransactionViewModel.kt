@@ -17,7 +17,7 @@ class TransactionViewModel @Inject constructor(
     private val transactionRepository: TransactionRepository
 ) : ViewModel() {
     val latestTransaction = MutableStateFlow<Transaction?>(null)
-    val _allTransactions = MutableStateFlow(emptyList<Transaction>())
+    private val _allTransactions = MutableStateFlow(emptyList<Transaction>())
     val allTransactions = _allTransactions.asStateFlow()
 
     suspend fun GetLatestTransaction() {

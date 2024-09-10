@@ -7,7 +7,7 @@ import retrofit2.http.Header
 interface PromoApiService {
 
     companion object{
-        val BASE_URL = "https://content.digi46.id/"
+        const val BASE_URL = "https://content.digi46.id/"
     }
 
     @GET("api/promos")

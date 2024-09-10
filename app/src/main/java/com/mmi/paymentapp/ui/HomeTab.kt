@@ -40,10 +40,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mmi.paymentapp.R
 import com.mmi.paymentapp.data.model.Transaction
@@ -57,7 +55,6 @@ import java.time.ZonedDateTime
 
 var showBottomSheet = mutableStateOf(false)
 var ShowHistoryBottomsheet = mutableStateOf(false)
-var showPromotionBottomsheet = mutableStateOf(false)
 var Balance : Float? = null
 
 @Composable
@@ -294,7 +291,7 @@ fun HomeTabView(transactioniewModel: TransactionViewModel, promotionViewModel: P
     }
 }
 
-suspend fun GetCurrentBalance(viewModel: TransactionViewModel) : Float {
+fun GetCurrentBalance(viewModel: TransactionViewModel) : Float {
     val balance : Float
     val latestTransaction : Transaction? = viewModel.latestTransaction.value
 

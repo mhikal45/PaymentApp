@@ -16,7 +16,7 @@ import javax.inject.Inject
 class PromotionViewModel @Inject constructor(
     private val promoRepository: PromoRepository
 ) : ViewModel() {
-    val _allPromotions = MutableStateFlow(emptyList<Promotion>())
+    private val _allPromotions = MutableStateFlow(emptyList<Promotion>())
     val allPromotions = _allPromotions.asStateFlow()
 
     fun GetAllPromotions() {

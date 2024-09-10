@@ -1,9 +1,7 @@
 package com.mmi.paymentapp.data.repository
 
-import co.yml.charts.common.extensions.isNotNull
 import com.mmi.paymentapp.data.local.PromotionDao
 import com.mmi.paymentapp.data.model.Promotion
-import com.mmi.paymentapp.data.model.Transaction
 import com.mmi.paymentapp.data.remote.PromoApiService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
