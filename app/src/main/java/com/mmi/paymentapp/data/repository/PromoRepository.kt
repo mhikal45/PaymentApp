@@ -21,12 +21,13 @@ class PromoRepository @Inject constructor(
         val tempPromotions = mutableListOf<Promotion>()
 
         for (promo in onlinePromotions!!){
-            val localPromo = localPromotions.first().firstOrNull { it.alt == promo!!.attributes!!.alt }
+            var localPromo = localPromotions.first().firstOrNull { it.alt == promo!!.attributes!!.alt }
             if (localPromo == null){
                 promotionDao.AddPromotion(promo!!.attributes!!)
+                localPromo = promo.attributes!!
             }
 
-            tempPromotions.add(promo!!.attributes!!)
+            tempPromotions.add(localPromo)
         }
 
         localPromotions = flow{

@@ -4,6 +4,7 @@ package com.mmi.paymentapp.ui
 
 import android.annotation.SuppressLint
 import android.util.Log
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -27,6 +28,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -38,6 +40,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -239,7 +242,7 @@ fun HomeTabView(transactioniewModel: TransactionViewModel, promotionViewModel: P
                     },
                     sheetState = historySheetState,
                     modifier = Modifier
-                        .fillMaxHeight()
+                        .fillMaxHeight(),
                 ) {
                     if (showLoadingState) {
                         CircularProgressIndicator(
@@ -371,15 +374,30 @@ fun TransactionHistory(viewModel: TransactionViewModel){
 @Composable
 fun PromotionList(viewModel: PromotionViewModel) {
     val allPromotions = viewModel.allPromotions.collectAsStateWithLifecycle().value
-    var showDetailPromotion by remember {
-        mutableStateOf(false)
-    }
 
     Column {
         if (allPromotions.isNotEmpty()){
             Log.i("History Transaction", "not empty " + allPromotions.count())
             LazyColumn {
                 items(allPromotions){promotion ->
+                    var promoDesc = promotion.desc
+
+                    var showDetailPromotion by remember {
+                        mutableStateOf(false)
+                    }
+
+                    var iconToShow by remember {
+                        mutableIntStateOf(
+                            0
+                        )
+                    }
+
+                    if(promoDesc?.count()!! > 50){
+                        promoDesc = buildString {
+                            append(promoDesc!!.removeRange(0..50))
+                            append("...")
+                        }
+                    }
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -388,42 +406,43 @@ fun PromotionList(viewModel: PromotionViewModel) {
                             colorScheme.primaryContainer, colorScheme.primary,
                             colorScheme.inversePrimary, colorScheme.inverseSurface
                         ),
-                        shape = MaterialTheme.shapes.medium
+                        shape = MaterialTheme.shapes.medium,
+                        onClick = {showDetailPromotion = !showDetailPromotion}
                     ) {
                         Text(
                             text = "${promotion.title}" ,
                             style = TextStyle(
-                                fontSize = 20.sp
+                                fontSize = 24.sp
                             ),
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(24.dp, 16.dp, 0.dp, 0.dp)
                         )
                         Text(
-                            text = "${promotion.desc}",
+                            text = "$promoDesc",
                             style = TextStyle(
-                                fontSize = 12.sp
+                                fontSize = 14.sp
                             ),
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(24.dp, 16.dp, 0.dp, 16.dp)
                         )
-                        Text(modifier = Modifier
-                            .fillMaxWidth()
-                            .drawBehind {
-                                val strokeWidth = 1 * density
-                                val y = size.height - strokeWidth / 2
 
-                                drawLine(
-                                    Color.Gray,
-                                    Offset(0f, y),
-                                    Offset(size.width, y),
-                                    strokeWidth
-                                )
-                            },
+                        Text(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .drawBehind {
+                                    val strokeWidth = 1 * density
+                                    val y = size.height - strokeWidth / 2
+                                    drawLine(
+                                        Color.Gray,
+                                        Offset(0f, y),
+                                        Offset(size.width, y),
+                                        strokeWidth
+                                    )
+                                },
                             text = ""
                         )
-
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -435,25 +454,241 @@ fun PromotionList(viewModel: PromotionViewModel) {
                             shape = MaterialTheme.shapes.medium
                         ) {
                             Row {
-                                Icon(
-                                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_arrow),
-                                    contentDescription = "open transaction history",
-                                    modifier = Modifier
-                                        .width(40.dp)
-                                        .height(40.dp)
-                                        .align(Alignment.CenterVertically)
-                                        .padding(8.dp, 0.dp, 0.dp, 0.dp)
-                                )
-                                Text(
-                                    text = "Riwayat Transaksi",
-                                    style = TextStyle(
-                                        fontSize = 16.sp
-                                    ),
+                                if(showDetailPromotion) {
+                                    iconToShow = R.drawable.ic_arrow_down
+                                    Icon(
+                                        imageVector = ImageVector.vectorResource(id = iconToShow),
+                                        contentDescription = "open transaction history",
+                                        modifier = Modifier
+                                            .width(40.dp)
+                                            .height(40.dp)
+                                            .align(Alignment.CenterVertically)
+                                            .padding(8.dp, 0.dp, 0.dp, 0.dp)
+                                    )
+                                    Text(
+                                        text = "Sembunyikan Detail Promo",
+                                        style = TextStyle(
+                                            fontSize = 16.sp
+                                        ),
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(8.dp, 0.dp, 0.dp, 0.dp)
+                                            .align(Alignment.CenterVertically)
+                                    )
+                                }
+                                else{
+                                    iconToShow = R.drawable.ic_arrow
+                                    Icon(
+                                        imageVector = ImageVector.vectorResource(id = iconToShow),
+                                        contentDescription = "open transaction history",
+                                        modifier = Modifier
+                                            .width(40.dp)
+                                            .height(40.dp)
+                                            .align(Alignment.CenterVertically)
+                                            .padding(8.dp, 0.dp, 0.dp, 0.dp)
+                                    )
+                                    Text(
+                                        text = "Tampilkan Detail Promo",
+                                        style = TextStyle(
+                                            fontSize = 16.sp
+                                        ),
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(8.dp, 0.dp, 0.dp, 0.dp)
+                                            .align(Alignment.CenterVertically)
+                                    )
+                                }
+                            }
+                            if(showDetailPromotion){
+                                Column(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(8.dp, 0.dp, 0.dp, 0.dp)
-                                        .align(Alignment.CenterVertically)
-                                )
+                                ) {
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                    ) {
+                                        Column(
+                                            modifier = Modifier
+                                                .weight(1f)
+                                        ) {
+                                            Row (
+                                                horizontalArrangement = Arrangement.SpaceBetween,
+                                                modifier = Modifier.fillMaxWidth()
+                                            ) {
+                                                Text(
+                                                    text = "Dibuat",
+                                                    style = TextStyle(
+                                                        fontSize = 14.sp
+                                                    ),
+                                                    modifier = Modifier
+                                                        .padding(24.dp, 16.dp, 0.dp, 16.dp)
+                                                )
+                                                Text(
+                                                    text = promotion.createdAt!!.replace('T',' ').trim('Z'),
+                                                    style = TextStyle(
+                                                        fontSize = 14.sp
+                                                    ),
+                                                    modifier = Modifier
+                                                        .padding(24.dp, 16.dp, 0.dp, 16.dp)
+                                                )
+                                            }
+                                            Row (
+                                                horizontalArrangement = Arrangement.SpaceBetween,
+                                                modifier = Modifier.fillMaxWidth()
+                                            ) {
+                                                Text(
+                                                    text = "Nama",
+                                                    style = TextStyle(
+                                                        fontSize = 14.sp
+                                                    ),
+                                                    modifier = Modifier
+                                                        .padding(24.dp, 16.dp, 0.dp, 16.dp)
+                                                )
+                                                Text(
+                                                    text = "${promotion.nama}",
+                                                    style = TextStyle(
+                                                        fontSize = 14.sp
+                                                    ),
+                                                    modifier = Modifier
+                                                        .padding(24.dp, 16.dp, 0.dp, 16.dp)
+                                                )
+                                            }
+                                            Row (
+                                                horizontalArrangement = Arrangement.SpaceBetween,
+                                                modifier = Modifier.fillMaxWidth()
+                                            )  {
+                                                Text(
+                                                    text = "Lokasi",
+                                                    style = TextStyle(
+                                                        fontSize = 14.sp
+                                                    ),
+                                                    modifier = Modifier
+                                                        .padding(24.dp, 16.dp, 0.dp, 16.dp)
+                                                )
+                                                Text(
+                                                    text = "${promotion.lokasi}",
+                                                    style = TextStyle(
+                                                        fontSize = 14.sp
+                                                    ),
+                                                    modifier = Modifier
+                                                        .padding(24.dp, 16.dp, 0.dp, 16.dp)
+                                                )
+                                            }
+                                            Row (
+                                                horizontalArrangement = Arrangement.SpaceBetween,
+                                                modifier = Modifier.fillMaxWidth()
+                                            )  {
+                                                Text(
+                                                    text = "Dipakai",
+                                                    style = TextStyle(
+                                                        fontSize = 14.sp
+                                                    ),
+                                                    modifier = Modifier
+                                                        .padding(24.dp, 16.dp, 0.dp, 16.dp)
+                                                )
+                                                Text(
+                                                    text = "${promotion.count}",
+                                                    style = TextStyle(
+                                                        fontSize = 14.sp
+                                                    ),
+                                                    modifier = Modifier
+                                                        .padding(24.dp, 16.dp, 0.dp, 16.dp)
+                                                )
+                                            }
+                                        }
+                                        Column(
+                                            modifier = Modifier
+                                                .weight(1f)
+                                        ) {
+                                            Row (
+                                                horizontalArrangement = Arrangement.SpaceBetween,
+                                                modifier = Modifier.fillMaxWidth()
+                                            )  {
+                                                Text(
+                                                    text = "Alternatif (Jumlah)",
+                                                    style = TextStyle(
+                                                        fontSize = 14.sp
+                                                    ),
+                                                    modifier = Modifier
+                                                        .padding(24.dp, 16.dp, 0.dp, 16.dp)
+                                                )
+                                                Text(
+                                                    text = "${promotion.alt}",
+                                                    style = TextStyle(
+                                                        fontSize = 14.sp
+                                                    ),
+                                                    modifier = Modifier
+                                                        .padding(24.dp, 16.dp, 0.dp, 16.dp)
+                                                )
+                                            }
+                                            Row (
+                                                horizontalArrangement = Arrangement.SpaceBetween,
+                                                modifier = Modifier.fillMaxWidth()
+                                            ) {
+                                                Text(
+                                                    text = "Longitude",
+                                                    style = TextStyle(
+                                                        fontSize = 14.sp
+                                                    ),
+                                                    modifier = Modifier
+                                                        .padding(24.dp, 16.dp, 0.dp, 16.dp)
+                                                )
+                                                Text(
+                                                    text = "${promotion.longitude}",
+                                                    style = TextStyle(
+                                                        fontSize = 14.sp
+                                                    ),
+                                                    modifier = Modifier
+                                                        .padding(24.dp, 16.dp, 0.dp, 16.dp)
+                                                )
+                                            }
+                                            Row (
+                                                horizontalArrangement = Arrangement.SpaceBetween,
+                                                modifier = Modifier.fillMaxWidth()
+                                            ) {
+                                                Text(
+                                                    text = "Latitude",
+                                                    style = TextStyle(
+                                                        fontSize = 14.sp
+                                                    ),
+                                                    modifier = Modifier
+                                                        .padding(24.dp, 16.dp, 0.dp, 16.dp)
+                                                )
+                                                Text(
+                                                    text = "${promotion.latitude}",
+                                                    style = TextStyle(
+                                                        fontSize = 14.sp
+                                                    ),
+                                                    modifier = Modifier
+                                                        .padding(24.dp, 16.dp, 0.dp, 16.dp)
+                                                )
+                                            }
+                                            Row (
+                                                horizontalArrangement = Arrangement.SpaceBetween,
+                                                modifier = Modifier.fillMaxWidth()
+                                            )  {
+                                                Text(
+                                                    text = "Diperbarui",
+                                                    style = TextStyle(
+                                                        fontSize = 14.sp
+                                                    ),
+                                                    modifier = Modifier
+                                                        .padding(24.dp, 16.dp, 0.dp, 16.dp)
+                                                )
+                                                Text(
+                                                    text = promotion.updatedAt!!.replace('T',' ').trim('Z'),
+                                                    style = TextStyle(
+                                                        fontSize = 14.sp
+                                                    ),
+                                                    modifier = Modifier
+                                                        .padding(24.dp, 16.dp, 0.dp, 16.dp)
+                                                )
+                                            }
+                                        }
+
+                                    }
+                                }
                             }
                         }
                     }
@@ -464,5 +699,4 @@ fun PromotionList(viewModel: PromotionViewModel) {
             Text(text = "No Promotion Recorded")
         }
     }
-
 }
