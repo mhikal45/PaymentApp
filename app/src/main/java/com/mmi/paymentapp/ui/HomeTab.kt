@@ -389,10 +389,12 @@ fun PromotionList(viewModel: PromotionViewModel) {
                         )
                     }
 
-                    if(promoDesc?.count()!! > 50){
-                        promoDesc = buildString {
-                            append(promoDesc!!.removeRange(0..50))
-                            append("...")
+                    if(!showDetailPromotion) {
+                        if (promoDesc?.length!! > 200) {
+                            promoDesc = buildString {
+                                append(promoDesc!!.removeRange(201..(promoDesc!!.length -1)))
+                                append("...")
+                            }
                         }
                     }
                     Card(
@@ -422,7 +424,7 @@ fun PromotionList(viewModel: PromotionViewModel) {
                             ),
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(24.dp, 16.dp, 0.dp, 16.dp)
+                                .padding(24.dp, 16.dp, 24.dp, 8.dp)
                         )
 
                         Text(
